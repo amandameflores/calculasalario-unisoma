@@ -1,0 +1,35 @@
+Introdução
+
+Documento com a finalidade de propor a criação de um projeto fictício de cálculos de salários e impostos a serem pagos a
+funcionários Unisoma.
+Projeto
+Criar um projeto Spring Boot para demonstração dos exercícios.
+A API deverá prover uma URL base e utilizar os verbos HTTP que indicará qual ação está sendo requisitada pelo consumidor
+do serviço.
+A URL base do seu serviço deverá ser /api/nomeservico.
+As seguintes tecnologias deverão ser utilizadas são:
+
+- Java 8
+- Maven (Build)
+- Hibernate (Implementação JPA)
+- Postgres (Data Base)
+- Utilizar o Padrão de Projetos DTO (Data transfer object).
+- JUnit e Mockito (Testes Unitários)
+
+Exercícios
+
+1.
+A UniSoma resolveu conceder aumento salarial a seus funcionários e para facilitar o cálculo dos novos salários
+resolvemos criar uma API RESTFULL que cadastre e liste funcionários, calcule e retorne os novos salários dos
+funcionários.
+i)
+ii)
+Cadastro de Funcionários
+(1) No cadastro deverá conter as seguintes informações: Nome, CPF, Data de Nascimento, Telefone, Endereço
+e o Salario.
+(2) Armazenar essas informações no banco de dados
+O cálculo do novo salario
+(1) Leia o CPF do funcionário, calcule, atualize e mostre o novo salário, bem como o valor de reajuste ganho e
+o índice reajustado, em percentual.
+(2) Calcule o novo salario e atualize o valor na base de dados.
+(3) O cálculo deve respeitar as regras da tabela abaixo:
