@@ -1,0 +1,34 @@
+package br.amandaflores.unisoma.calculasalario.model.entities;
+
+//TODO mapear classes conforme o desafio unisoma
+//TODO lembrar de utilizar o Padrão de Projetos DTO (Data transfer object)
+
+public class ClientResponse {
+
+    private Cliente client;
+    private String message;
+
+    public ClientResponse(Cliente client, String message) {
+        this.client = client;
+        this.message = message;
+    }
+
+    public ClientResponse() {
+    }
+
+    public Cliente getClient() {
+        return client;
+    }
+
+    public void setClient(Cliente client) {
+        this.client = client;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+}

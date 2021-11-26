@@ -1,0 +1,26 @@
+package br.amandaflores.unisoma.calculasalario.model.repository;
+ 
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import br.amandaflores.unisoma.calculasalario.model.entities.Funcionario;
+
+
+public interface FuncionarioRepository extends JpaRepository<Funcionario, Integer> {
+
+	Funcionario findByCpf(String cpf);
+	/*
+    @Query("select c from Client c where c.cpf like ?1")
+    Optional<Funcionario> findClientByCpf(String cpf);
+
+    @Query("select c from Client c where c.email like ?1")
+    Optional<Funcionario> findClientByEmail(String email);*/
+}
+
+//
+//public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
+//	Usuario findByNome(String nome);
+//
+//	Usuario findByLogin(String login);
+//
+//	Usuario findByLoginAndSenha(String login, String senha);
+//}

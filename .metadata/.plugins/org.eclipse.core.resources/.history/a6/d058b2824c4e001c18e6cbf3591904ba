@@ -1,0 +1,69 @@
+package br.amandaflores.unisoma.calculasalario.model.dto;
+
+import javax.persistence.Column;
+
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.br.CPF;
+
+public class FuncionarioDto {
+
+    private int id;
+
+    private String nome;
+    
+    private String cpf;
+
+    private String nascimento;
+    
+    private String telefone;
+    
+    private String endereco;
+    
+    private double salario;
+
+    public Funcionario(String name, String cpf, String nascimento, String telefone, String endereco, double salario) {
+        this.nome = name;
+        this.cpf = cpf;
+        this.nascimento = nascimento;
+        this.telefone = telefone;
+        this.endereco = endereco;
+        this.salario = salario;
+    }
+
+    public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public String getNascimento() {
+		return nascimento;
+	}
+
+	public void setNascimento(String nascimento) {
+		this.nascimento = nascimento;
+	}
+
+	public Funcionario() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+}
+

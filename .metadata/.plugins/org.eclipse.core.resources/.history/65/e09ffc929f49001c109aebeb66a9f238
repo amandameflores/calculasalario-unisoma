@@ -1,0 +1,10 @@
+package br.amandaflores.unisoma.calculasalario.model.entities;
+
+public class ClientResponse {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

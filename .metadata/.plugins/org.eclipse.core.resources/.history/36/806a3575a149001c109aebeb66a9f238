@@ -1,0 +1,5 @@
+package br.amandaflores.unisoma.calculasalario.model.repository;
+
+public interface ClientRepository {
+
+}

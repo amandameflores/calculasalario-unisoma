@@ -1,0 +1,13 @@
+package br.amandaflores.unisoma.calculasalario.model.services;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+public class FuncionarioService {
+
+	@Service
+	public class UsuarioService extends ServicoBasico {
+
+		@Autowired
+		private Usuario
+}

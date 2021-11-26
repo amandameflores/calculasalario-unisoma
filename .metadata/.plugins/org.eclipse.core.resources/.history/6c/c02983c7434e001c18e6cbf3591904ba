@@ -1,0 +1,86 @@
+package br.amandaflores.unisoma.calculasalario.model.entities;
+
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.br.CPF;
+
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+
+//TODO mapear classes conforme o desafio unisoma
+//TODO lembrar de utilizar o Padrão de Projetos DTO (Data transfer object)
+/* talvez criar no banco a tabela funcionário com os campos: Nome, CPF, Data de Nascimento, 
+  Telefone, Endereço e o Salario */
+
+@Entity
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = "cpf")})
+public class Client {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @NotBlank(message = "O nome é requerido")
+    private String nome;
+
+    @Email(message = "Invalid e-mail")
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    @CPF(message = "CPF inválido")
+    @Column(unique = true, nullable = false)
+    private String cpf;
+
+    @NotBlank(message = "A data de nascimento é requerida")
+    private String nascimento;
+
+    public Client(String name, String email, String cpf, String birthday) {
+        this.nome = name;
+        this.email = email;
+        this.cpf = cpf;
+        this.nascimento = birthday;
+    }
+
+    public Client() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return nome;
+    }
+
+    public void setName(String name) {
+        this.nome = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getBirthday() {
+        return nascimento;
+    }
+
+    public void setBirthday(String birthday) {
+        this.nascimento = birthday;
+    }
+
+}

@@ -1,0 +1,5 @@
+package br.amandaflores.unisoma.calculasalario.model.services;
+
+public class FuncionarioService {
+
+}

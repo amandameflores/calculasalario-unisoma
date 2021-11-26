@@ -1,0 +1,6 @@
+package br.amandaflores.unisoma.calculasalario.model.entities;
+
+public class ClientResponse {
+
+
+}

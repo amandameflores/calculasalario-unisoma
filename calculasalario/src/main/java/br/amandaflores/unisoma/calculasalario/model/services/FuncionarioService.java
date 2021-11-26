@@ -1,0 +1,68 @@
+package br.amandaflores.unisoma.calculasalario.model.services;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import br.amandaflores.unisoma.calculasalario.model.dto.FuncionarioDto;
+import br.amandaflores.unisoma.calculasalario.model.entities.Funcionario;
+import br.amandaflores.unisoma.calculasalario.model.repository.FuncionarioRepository;
+
+@Service
+public class FuncionarioService {
+
+	@Autowired
+	private FuncionarioRepository funcionarioRepository;
+
+	public boolean cadastraFuncionario(FuncionarioDto funcionarioDto) {
+		Funcionario funcionario = funcionarioDto.converter();
+		funcionarioRepository.save(funcionario);
+		return true;
+	}
+
+	public FuncionarioDto aumentaSalario(FuncionarioDto funcionarioDto) {
+		Funcionario funcionario = funcionarioRepository.findByCpf(funcionarioDto.getCpf());
+		double salario = funcionario.getSalario();
+		if (salario >= 0 && salario <= 400) {
+			funcionario.setSalario(salario * 1.15);
+		} else if (salario >= 400.01 && salario <= 800) {
+			funcionario.setSalario(salario * 1.12);
+		} else if (salario >= 800.01 && salario <= 1200) {
+			funcionario.setSalario(salario * 1.1);
+		} else if (salario >= 1200.01 && salario <= 2000) {
+			funcionario.setSalario(salario * 1.07);
+		} else {
+			funcionario.setSalario(salario * 1.04);
+		}
+
+		funcionario = funcionarioRepository.saveAndFlush(funcionario);
+
+		return new FuncionarioDto(funcionario);
+	}
+
+	public List<FuncionarioDto> listaFuncionario() {
+		List<Funcionario> funcionarios = funcionarioRepository.findAll();
+
+		if (funcionarios != null) {
+			List<FuncionarioDto> funcionariosDto = new ArrayList<>();
+			for (Funcionario func : funcionarios) {
+				funcionariosDto.add(new FuncionarioDto(func));
+			}
+			return funcionariosDto;
+		}
+		return null;
+	}
+
+	public FuncionarioDto obterFuncionario(String cpf) {
+		Funcionario funcionario = funcionarioRepository.findByCpf(cpf);
+
+		if (funcionario != null) {
+
+			return new FuncionarioDto(funcionario);
+
+		}
+		return null;
+	}
+}

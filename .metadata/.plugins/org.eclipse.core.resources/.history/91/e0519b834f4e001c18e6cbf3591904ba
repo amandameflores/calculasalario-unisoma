@@ -1,0 +1,21 @@
+package br.amandaflores.unisoma.calculasalario.model.services;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import br.amandaflores.unisoma.calculasalario.model.dto.FuncionarioDto;
+import br.amandaflores.unisoma.calculasalario.model.entities.Funcionario;
+import br.amandaflores.unisoma.calculasalario.model.repository.FuncionarioRepository;
+
+@Service
+public class FuncionarioService {
+
+	@Autowired
+	private FuncionarioRepository funcionario;
+	
+	public boolean cadastroFuncionario(FuncionarioDto funcionarioDto) {
+		Funcionario funcionario = funcionarioDto.converter();
+		
+		return true;
+	}
+}

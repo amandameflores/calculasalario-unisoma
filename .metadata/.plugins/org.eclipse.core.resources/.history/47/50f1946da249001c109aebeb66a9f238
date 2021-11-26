@@ -1,0 +1,7 @@
+package br.amandaflores.unisoma.calculasalario.controllers;
+	
+@RestController
+@RequestMapping("/api/v1/clients")
+public class ClientController {
+
+}

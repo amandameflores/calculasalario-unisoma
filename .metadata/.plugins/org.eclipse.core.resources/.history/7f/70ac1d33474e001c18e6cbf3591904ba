@@ -1,0 +1,110 @@
+package br.amandaflores.unisoma.calculasalario.controllers;
+
+import java.util.Optional;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import br.amandaflores.unisoma.calculasalario.model.entities.Funcionario;
+import br.amandaflores.unisoma.calculasalario.model.entities.ClientResponse;
+import br.amandaflores.unisoma.calculasalario.model.repository.ClientRepository;
+
+/* TODO criar um método que faça "O cálculo do novo salario"
+(1) Leia o CPF do funcionário, calcule, atualize e mostre o novo salário, bem como o valor de reajuste ganho e
+o índice reajustado, em percentual.
+(2) Calcule o novo salario e atualize o valor na base de dados.
+(3) O cálculo deve respeitar as regras da tabela abaixo: (no PDF) */
+
+@RestController
+@RequestMapping("/api/v1/clients")
+public class ClientController {
+
+	@Autowired
+	private ClientRepository clientRepository;
+	
+	@GetMapping
+	public ResponseEntity<Iterable<Funcionario>> getClients() {
+	     Iterable<Funcionario> data = clientRepository.findAll();
+	    return new ResponseEntity<>(data, HttpStatus.OK);
+	}
+	
+	@PostMapping(produces="application/json")
+	public ResponseEntity<ClientResponse> createClient(@Valid @RequestBody Funcionario client) {
+	    Optional<Funcionario> cpf = clientRepository.findClientByCpf(client.getCpf());
+	    Optional<Funcionario> email = clientRepository.findClientByEmail(client.getEmail());
+	    ClientResponse response = new ClientResponse();
+	    if(cpf.isPresent() || email.isPresent()){
+	        if (cpf.isPresent() && email.isPresent()) {
+	            response.setMessage("E-mail is required and must be unique. " +
+	                    "CPF is required and must be unique");
+	        } else if(email.isPresent()) {
+	            response.setMessage("CPF is required and must be unique");
+	        } else {
+	            response.setMessage("E-mail is required and must be unique.");
+	        }
+	        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	    }
+	    else{
+	         @Valid
+			Funcionario newClient = clientRepository.save(client);
+	        response.setClient(newClient);
+	        response.setMessage("Success");
+	        return new ResponseEntity<>(response, HttpStatus.CREATED);
+	    }
+	}
+	
+	@PutMapping(path = "/{id}")
+	public ResponseEntity<ClientResponse> updateClient(@RequestBody Funcionario client, @PathVariable int id) {
+	    boolean data = clientRepository.existsById(id);
+	    ClientResponse response = new ClientResponse();
+	    if(data){
+	        client.setId(id);
+	        clientRepository.save(client);
+	        response.setClient(client);
+	        response.setMessage("Success");
+	        return new ResponseEntity<>(response, HttpStatus.OK);
+	    }else{
+	        response.setMessage("Client id: "+id+" cannot be found");
+	        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+	    }
+	}
+	
+	@GetMapping(path = "/{id}")
+	public ResponseEntity<ClientResponse> getClientById(@PathVariable int id) {
+	    Optional<Funcionario> client = clientRepository.findById(id);
+	    ClientResponse response = new ClientResponse();
+	    if(client.isPresent()){
+	        response.setClient(client.get());
+	        response.setMessage("Success");
+	        return new ResponseEntity<>(response, HttpStatus.OK);
+	    }
+	    response.setMessage("Client id: "+id+" cannot be found");
+	    return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+	}
+	
+	@DeleteMapping(path = "/{id}")
+	public ResponseEntity<ClientResponse> deleteClient(@PathVariable int id) {
+	    Optional<Funcionario> data = clientRepository.findById(id);
+	    ClientResponse response = new ClientResponse();
+	    if(data.isPresent()){
+	        clientRepository.delete(data.get());
+	        response.setMessage("Client deleted");
+	        return new ResponseEntity<>(response, HttpStatus.OK);
+	    }
+	    response.setMessage("Client id: "+id+" cannot be found");
+	    return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+	}
+	
+	
+}

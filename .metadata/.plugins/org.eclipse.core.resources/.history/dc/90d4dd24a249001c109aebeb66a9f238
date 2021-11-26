@@ -1,0 +1,5 @@
+package br.amandaflores.unisoma.calculasalario.controllers;
+
+public class ClientController {
+
+}
