@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.amandaflores.unisoma.calculasalario.model.Imposto;
 import br.amandaflores.unisoma.calculasalario.model.dto.FuncionarioDto;
 import br.amandaflores.unisoma.calculasalario.model.entities.Funcionario;
 import br.amandaflores.unisoma.calculasalario.model.repository.FuncionarioRepository;
@@ -18,62 +19,87 @@ public class FuncionarioService {
 
 	public boolean cadastraFuncionario(FuncionarioDto funcionarioDto) {
 		Funcionario funcionario = funcionarioDto.converter();
+		if (funcionario == null) {
+			return false;
+		}
+		
 		funcionarioRepository.save(funcionario);
 		return true;
 	}
 
-	public FuncionarioDto aumentaSalario(FuncionarioDto funcionarioDto) {
-		Funcionario funcionario = funcionarioRepository.findByCpf(funcionarioDto.getCpf());
+	public FuncionarioDto aumentaSalario(String cpf) {
+		Funcionario funcionario = funcionarioRepository.findByCpf(cpf);
 		double salario = funcionario.getSalario();
-		if (salario >= 0 && salario <= 400) {
-			funcionario.setSalario(salario * 1.15);
-		} else if (salario >= 400.01 && salario <= 800) {
-			funcionario.setSalario(salario * 1.12);
-		} else if (salario >= 800.01 && salario <= 1200) {
-			funcionario.setSalario(salario * 1.1);
-		} else if (salario >= 1200.01 && salario <= 2000) {
-			funcionario.setSalario(salario * 1.07);
-		} else {
-			funcionario.setSalario(salario * 1.04);
-		}
+		
+		Double aumento= calcularAumento(salario);
+		aumento+= 1;
+		funcionario.setSalario(salario*aumento);
 
 		funcionario = funcionarioRepository.saveAndFlush(funcionario);
 
 		return new FuncionarioDto(funcionario);
 	}
 
-	public Double calcularImposto(Double salario) {
-
-		Double imposto = 0.0d;
-
-		if (salario <= 2000) {
-			imposto = 0;
-		} else if (salario <= 3000) {
-			imposto = "8%";
-		} else if (salario <= 4500) {
-			imposto = "18%";
-		} else {
-			imposto = "28%";
+	public double obterImposto (String cpf) {
+		Funcionario funcionario = funcionarioRepository.findByCpf(cpf);
+		if (funcionario == null) {
+			return -1;
 		}
+		
+		double salario = funcionario.getSalario();
+		return calcularTxImposto(salario);
+	}
+	
+	public Imposto buscarTxImposto(double salario) {
+		for (Imposto objImposto: Imposto.values()) {
+			
+			if ( (salario >= objImposto.getLimiteMinimo()) && (salario <= objImposto.getLimiteMaximo()) ) {
+				return objImposto;
+			}
+			
+		}
+		
+		return null;
+	}
+	
+	public double calcularTxImposto(double salario) {
 
-		return imposto;
+		Imposto imposto= buscarTxImposto(salario); 
+//		
+//		if (salario <= 2000) {
+//			imposto = 0.0d;
+//		} else if (salario <= 3000) {
+//			imposto = 0.08d;
+//		} else if (salario <= 4500) {
+//			imposto = 0.18d;
+//		} else {
+//			imposto = 0.28d;
+//		}
+
+		if (imposto != null)
+			return imposto.getTaxa();
+		
+		return 0;
 	}
 	
 	public Double calcularAumento (Double salario) {
 
 		Double aumento= 0.0d;
 
-		if (salario <= 4000) {
+		if (salario <= 400) {
 			aumento= 0.15;
 		}
-		else if (salario <= 8000) {
+		else if (salario <= 800) {
 			aumento= 0.12;
 		}
-		else if (salario <= 12000) {
+		else if (salario <= 1200) {
 			aumento= 0.10;
 		}
-		else {
+		else if (salario <= 2000) {
 			aumento= 0.07;
+		}
+		else {
+			aumento= 0.04;
 		}
 
 		return aumento;	
@@ -95,12 +121,50 @@ public class FuncionarioService {
 
 	public FuncionarioDto obterFuncionario(String cpf) {
 		Funcionario funcionario = funcionarioRepository.findByCpf(cpf);
-
+		
 		if (funcionario != null) {
 
 			return new FuncionarioDto(funcionario);
 
 		}
 		return null;
+	}
+
+	public double calcularValorImposto(double salario) {
+		double imposto= 0;
+		
+		//List<Double> minimos= Imposto.getListaMinimos ();
+		List<Double> maximos= Imposto.getListaMaximos ();
+				
+		double resta= salario;
+		
+		for (int i= maximos.size()-1; i >= 0; i--) {
+		//for (Double maximo: maximos) {
+			
+			Double maximo= maximos.get(i);
+			
+			Imposto imp= Imposto.getImpostoPeloMaximo(maximo);
+			if (imp == null) {
+				continue;
+			}
+			
+			double minimo= imp.getLimiteReferencia();
+			
+			double parcial= resta - minimo;
+			if (parcial <= 0) {
+				continue;
+			}
+			
+			imposto += (parcial * imp.getTaxa());
+						
+			resta-= parcial;
+			if (resta <= 0) {
+				break;
+			}
+				
+		}
+		
+		
+		return imposto;
 	}
 }

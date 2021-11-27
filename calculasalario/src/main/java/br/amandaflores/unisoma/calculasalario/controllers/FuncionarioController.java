@@ -19,24 +19,24 @@ public class FuncionarioController {
 	@GetMapping("/funcionario/{cpf}")
 	public FuncionarioDto listar(@PathVariable String cpf) {
 		
-		return funcionarioService.listaFuncionario(cpf);
+		return funcionarioService.obterFuncionario(cpf);
 	}
 
 	@PutMapping("/funcionario")
 	public boolean listar(@RequestBody FuncionarioDto funcionarioDto) {
 		
-		return funcionarioService.adicionarFuncionario(funcionarioDto);
+		return funcionarioService.cadastraFuncionario(funcionarioDto);
 	}
 	
 	@GetMapping("/aumento/{cpf}")
 	public FuncionarioDto calcularAumentoSalario(@PathVariable String cpf) {
 		
-		return funcionarioService.calcularAumento(cpf);
+		return funcionarioService.aumentaSalario(cpf);
 	}
 	
 	@GetMapping("/irpf/{cpf}")
-	public FuncionarioDto calcularIrpf(@PathVariable String cpf) {
+	public double calcularIrpf(@PathVariable String cpf) {
 		
-		return funcionarioService.calcularIrpf (cpf);
+		return funcionarioService.obterImposto (cpf);
 	}
 }
