@@ -8,8 +8,12 @@ import org.springframework.stereotype.Service;
 
 import br.amandaflores.unisoma.calculasalario.model.Imposto;
 import br.amandaflores.unisoma.calculasalario.model.dto.FuncionarioDto;
+import br.amandaflores.unisoma.calculasalario.model.dto.ImpostoDto;
+import br.amandaflores.unisoma.calculasalario.model.dto.ReajusteDto;
 import br.amandaflores.unisoma.calculasalario.model.entities.Funcionario;
+import br.amandaflores.unisoma.calculasalario.model.entities.Reajuste;
 import br.amandaflores.unisoma.calculasalario.model.repository.FuncionarioRepository;
+import br.amandaflores.unisoma.calculasalario.model.repository.ReajusteRepository;
 
 @Service
 public class FuncionarioService {
@@ -17,6 +21,9 @@ public class FuncionarioService {
 	@Autowired
 	private FuncionarioRepository funcionarioRepository;
 
+	@Autowired
+	private ReajusteRepository reajusteRepository;
+	
 	public boolean cadastraFuncionario(FuncionarioDto funcionarioDto) {
 		Funcionario funcionario = funcionarioDto.converter();
 		if (funcionario == null) {
@@ -27,27 +34,57 @@ public class FuncionarioService {
 		return true;
 	}
 
-	public FuncionarioDto aumentaSalario(String cpf) {
+	public ReajusteDto aumentaSalario(String cpf) {
 		Funcionario funcionario = funcionarioRepository.findByCpf(cpf);
 		double salario = funcionario.getSalario();
 		
-		Double aumento= calcularAumento(salario);
-		aumento+= 1;
-		funcionario.setSalario(salario*aumento);
+		Double indice= calcularAumento(salario);
+		Double aumento= indice + 1;
+		
+		double salarioNovo= salario*aumento;
+		funcionario.setSalario(salarioNovo);
 
+		Reajuste reajuste= new Reajuste();
+		reajuste.setIndicePercentual(indice*100);
+		reajuste.setNovoSalario(salarioNovo);
+		reajuste.setReajuste(salarioNovo-salario);
+		funcionario.setReajuste(reajuste);
+		
+		reajusteRepository.saveAndFlush(reajuste);
+		
 		funcionario = funcionarioRepository.saveAndFlush(funcionario);
 
-		return new FuncionarioDto(funcionario);
+		ReajusteDto aumentoSal= new ReajusteDto ();
+		aumentoSal.setNovoSalario(salarioNovo);
+		aumentoSal.setReajuste(salarioNovo-salario);
+		aumentoSal.setIndicePercentual(indice*100);
+		
+		return aumentoSal;
 	}
 
-	public double obterImposto (String cpf) {
+	public ImpostoDto obterImposto (String cpf) {
 		Funcionario funcionario = funcionarioRepository.findByCpf(cpf);
 		if (funcionario == null) {
-			return -1;
+			return null;
 		}
 		
 		double salario = funcionario.getSalario();
-		return calcularTxImposto(salario);
+		
+		ImpostoDto impostoDto= new ImpostoDto ();
+		
+		Imposto imposto= buscarTxImposto(salario);
+		if (imposto != null) {
+			if (imposto.equals(Imposto.ISENTO))
+				impostoDto.setImposto(imposto.getNome());
+			else
+				impostoDto.setImposto(String.format("Imposto: R$ %.2f", calcularValorImposto (salario)));
+		}
+		else
+			return null;
+		
+		impostoDto.setCpf(cpf);
+		
+		return impostoDto;
 	}
 	
 	public Imposto buscarTxImposto(double salario) {
@@ -166,5 +203,20 @@ public class FuncionarioService {
 		
 		
 		return imposto;
+	}
+
+	public ReajusteDto obterReajuste(String cpf) {
+		
+		Funcionario funcionario= funcionarioRepository.findByCpf(cpf);
+		if ( (funcionario == null) || (funcionario.getReajuste() == null) )
+			return null;
+		
+		ReajusteDto reajuste= new ReajusteDto ();
+		reajuste.setCpf(cpf);
+		reajuste.setIndicePercentual(funcionario.getReajuste().getIndicePercentual());
+		reajuste.setNovoSalario(funcionario.getReajuste().getNovoSalario());
+		reajuste.setReajuste(funcionario.getReajuste().getReajuste());
+		
+		return reajuste;
 	}
 }

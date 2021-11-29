@@ -4,7 +4,7 @@ import br.amandaflores.unisoma.calculasalario.model.entities.Funcionario;
 
 public class FuncionarioDto {
 
-    private int id;
+//    private int id;
 
     private String nome;
     
@@ -47,13 +47,13 @@ public class FuncionarioDto {
 		this.nascimento = nascimento;
 	}
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+//    public int getId() {
+//        return id;
+//    }
+//
+//    public void setId(int id) {
+//        this.id = id;
+//    }
 
     public String getCpf() {
         return cpf;
@@ -62,6 +62,30 @@ public class FuncionarioDto {
     public void setCpf(String cpf) {
         this.cpf = cpf;
     }
+    
+	public String getTelefone() {
+		return telefone;
+	}
+
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
+
+	public String getEndereco() {
+		return endereco;
+	}
+
+	public void setEndereco(String endereco) {
+		this.endereco = endereco;
+	}
+
+	public double getSalario() {
+		return salario;
+	}
+
+	public void setSalario(double salario) {
+		this.salario = salario;
+	}
 
 	public Funcionario converter() {
 		Funcionario funcionario = new Funcionario();

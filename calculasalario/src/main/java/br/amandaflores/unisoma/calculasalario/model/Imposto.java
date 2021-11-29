@@ -6,9 +6,9 @@ import java.util.List;
 public enum Imposto {
 
 	ISENTO ("Isento", 0, 0, 0, 2000),
-	TAXA_8 ("", 0.08, 2000, 2000.01, 3000),
-	TAXA_18 ("", 0.18, 3000, 3000.01, 4500),	
-	TAXA_28 ("", 0.28, 4500, 4500.01, Double.MAX_VALUE);
+	TAXA_8 ("8%", 0.08, 2000, 2000.01, 3000),
+	TAXA_18 ("18%", 0.18, 3000, 3000.01, 4500),	
+	TAXA_28 ("28%", 0.28, 4500, 4500.01, Double.MAX_VALUE);
 		
 	private String nome;
 	private double taxa;

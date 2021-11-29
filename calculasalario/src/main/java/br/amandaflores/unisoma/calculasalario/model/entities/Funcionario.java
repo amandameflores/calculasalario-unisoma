@@ -2,9 +2,11 @@ package br.amandaflores.unisoma.calculasalario.model.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -34,6 +36,9 @@ public class Funcionario {
     @Column
     private double salario;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    private Reajuste reajuste;
+    
     public Funcionario(String name, String cpf, String nascimento, String telefone, String endereco, double salario) {
         this.nome = name;
         this.cpf = cpf;
@@ -100,6 +105,14 @@ public class Funcionario {
 
 	public String getEndereco() {
 		return endereco;
+	}
+
+	public Reajuste getReajuste() {
+		return reajuste;
+	}
+
+	public void setReajuste(Reajuste reajuste) {
+		this.reajuste = reajuste;
 	}
 
 }
